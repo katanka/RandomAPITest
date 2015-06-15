@@ -1,5 +1,5 @@
 from __future__ import division
-import urllib2, yaml, threading, sys, json, csv
+import urllib2, threading, sys, json, csv
 
 
 unique_pages = 0
