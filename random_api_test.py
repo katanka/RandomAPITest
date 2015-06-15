@@ -12,7 +12,11 @@ url_map = {
 hashset = set()
 batch_size = 25
 repeats = dict()
-headersList = list()
+response_headers = list()
+
+json1_file = open('headers.json')
+json1_str = json1_file.read()
+request_headers = json.loads(json1_str)
 
 def printError(str):
 	print 'Error: ' + str + '\n'
@@ -39,17 +43,17 @@ url = url_map[api]
 
 def crawl():
 	global unique_pages
-	headers = {'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/600.1.3 (KHTML, like Gecko) Version/8.0 Mobile/12A4345d Safari/600.1.4',
+	request_headers = {'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/600.1.3 (KHTML, like Gecko) Version/8.0 Mobile/12A4345d Safari/600.1.4',
 				'Cache-Control': 'max-age=0' }
-	req = urllib2.Request(url, headers=headers)
+	req = urllib2.Request(url, headers=request_headers)
 	try:
 		response = urllib2.urlopen( req )
-		cacheHeaders = response.info()
+		response_header = response.info()
 		data = json.loads(response.read())
 	except:
 		print 'Error'
 
-	headersList.append(cacheHeaders)
+	response_headers.append(response_header)
 	
 
 	#print data
@@ -143,8 +147,18 @@ if len(repeats) > 0:
 
 cacheHits = 0
 cacheMisses = 0
+f = open('response_headers.txt','w')
+f.seek(0)
+f.truncate()
 
-for header in headersList:
+keys = response_headers[0].keys()
+keys.sort()
+
+for header in response_headers:
+	for key in keys:
+		if(header.getheader(key)):
+			f.write(key + ": " + header.getheader(key) + "\n")
+	f.write("\n")
 	if header.getheader('X-Cache') == 'MISS, MISS':
 		cacheMisses += 1
 	else:
@@ -152,3 +166,5 @@ for header in headersList:
 
 print "Cache Hits: " + `cacheHits`
 print "Cache Misses: " + `cacheMisses`
+
+f.close() # you can omit in most cases as the destructor will call if
