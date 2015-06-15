@@ -15,8 +15,7 @@ repeats = dict()
 headersList = list()
 
 def printError(str):
-	print '\n\033[31mError: ' + str
-	print '\033[30m'
+	print 'Error: ' + str + '\n'
 
 if len( sys.argv ) != 3 :
 	printError("Please enter an API and # of calls\nUsage: python random_api_test.py [API name] [# calls]")
